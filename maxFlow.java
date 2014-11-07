@@ -14,7 +14,7 @@ public class maxFlox {
 	int neighbor;
 	int capacity;
 
-	List<int[]> neighborList = new List<int[]> neighborList(e); 
+	List<List<Integer>> neighborList = new List<List<Integer>>(); 
 	int[][] capacityMatrix = new int[][] capacityMatrix();
 	
 	// Bygger grannlista och capacitetsmatris
