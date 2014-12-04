@@ -4,6 +4,7 @@ public class Edge {
 	private int end; // Slut noden
 	private int cap; 
 	private int flow;
+	private Edge reverse;
 
 	// Konstruktorer för Edge objekt.
 	public Edge(int start, int end, int cap, int flow) {
@@ -34,7 +35,8 @@ public class Edge {
 	}
 
 	public void setCap(int cap) {
-		this.cap = cap;
+		int tempCap = this.cap;
+		this.cap = tempCap + cap;
 	}
 
 	public int getFlow() {
@@ -42,6 +44,15 @@ public class Edge {
 	}
 
 	public void setFlow(int flow) {
-		this.flow = flow;
+		int tempFlow = this.flow;
+		this.flow = tempFlow + flow;
+	}
+
+	public void setReverse(Edge edge){
+		this.reverse = edge;
+	}
+
+	public void getReverse(){
+		return reverse;
 	}
 }
