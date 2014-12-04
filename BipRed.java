@@ -14,6 +14,7 @@ public class BipRed {
     int y;
     int e;
 	int[][] allEdges;
+	int totflow;
 
     void readBipartiteGraph() {
 	// Läs antal hörn och kanter
@@ -31,13 +32,13 @@ public class BipRed {
     }
     
     
-    void writeFlowGraph(int v, int e, int[][] allEdges) {
+    void writeFlowGraph() {
 	int v = x + y; 
 	int s = v + 1; 
 	int t = v + 2;
 	int c = 1;
 	// Skriv ut antal hörn och kanter samt källa och sänka
-	io.println(x+y+2);
+	io.println(v+2);
 	io.println(s + " " + t);
 	io.println(e+x+y);
 	for(int i = 1; i <= x; i++){
@@ -46,7 +47,7 @@ public class BipRed {
 	for (int i = 0; i < e; ++i) {
 	    io.println(allEdges[0][i] + " " + allEdges[1][i] + " " + c);
 	}
-	for(int i = x+1; i <= y; i++){
+	for(int i = x+1; i <= v; i++){
 		io.println(i + " " + t + " "+ c);
 	}
 
@@ -54,7 +55,7 @@ public class BipRed {
 	io.flush();
 	
 	// Debugutskrift
-	System.err.println("Skickade iväg flödesgrafen");
+	//System.err.println("Skickade iväg flödesgrafen");
     }
     
     
@@ -66,12 +67,13 @@ public class BipRed {
 	int s = io.getInt();
 	int t = io.getInt();
 	int totflow = io.getInt();
-	int e = io.getInt();
+	e = io.getInt();
+
 
 	allEdges = new int[3][e];
 	
-	io.println(x+" "+y);
-	io.println(totflow);
+	//io.println(x+" "+y);
+	//io.println(totflow);
 
 	for (int i = 0; i < e; ++i) {
 	    // Flöde f från a till b
@@ -79,8 +81,7 @@ public class BipRed {
 	    allEdges[1][i] = io.getInt();
 	    allEdges[2][i] = io.getInt();
 	   
-	    if(allEdges[0][i] <s||allEdges[1][i]<s)
-	    	io.println(allEdges[0][i]+" "+allEdges[1][i]);
+	    
 	}
 
 
@@ -88,17 +89,16 @@ public class BipRed {
     
     
     void writeBipMatchSolution() {
-	int x = 17, y = 4711, maxMatch = 0;
 	
 	// Skriv ut antal hörn och storleken på matchningen
 	io.println(x + " " + y);
-	io.println(maxMatch);
-	
-	for (int i = 0; i < maxMatch; ++i) {
-	    int a = 5, b = 2323;
-	    // Kant mellan a och b ingår i vår matchningslösning
-	    io.println(a + " " + b);
+	io.println(totflow);
+	for(int i = 0; i <e; i++){
+		if(allEdges[0][i] <= (x+y) && allEdges[1][i] <= (x+y)){
+			io.println(allEdges[0][i]+" "+allEdges[1][i]);
+		}
 	}
+	io.flush();
 	
     }
     
@@ -114,7 +114,7 @@ public class BipRed {
 	writeBipMatchSolution();
 
 	// debugutskrift
-	System.err.println("Bipred avslutar\n");
+	//System.err.println("Bipred avslutar\n");
 
 	// Kom ihåg att stänga ner Kattio-klassen
 	io.close();
