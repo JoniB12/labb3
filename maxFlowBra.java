@@ -20,12 +20,14 @@ public class maxFlow {
       int x = io.getInt();
       int y = io.getInt();
       int c = io.getInt();
-      Edge xEdge = new (Edge(x, y, c, 0));
-      Edge yEdge = new (Edge(y, x, -c, 0));
-      xEdge.setReverse(yEdge);
-      yEdge.setReverse(xEdge);
-      edges.add(x, xEdge);
-      edges.add(y, yEdge);
+      if (!checkExist(x, y)) {
+        Edge xEdge = new (Edge(x, y, c, 0));
+        Edge yEdge = new (Edge(y, x, -c, 0));
+        xEdge.setReverse(yEdge);
+        yEdge.setReverse(xEdge);
+        edges.add(x, xEdge);
+        edges.add(y, yEdge);
+      }
     }
   }
 
@@ -37,24 +39,22 @@ public class maxFlow {
     // add handling of the recursion results
 
   }
-  
-  // fix this, it doesn't work!
-  private Edge getNextEdge(boolean[] visited, int vertex) {
-    int i = 0;
-    while (edges(vertex).hasNext()) {
-      edge = edges(vertex).get());
-      if (edge.getCap()>0 && !visited[vertex]) {
-        if !edge==t {
-          getNextEdge(visited, edge.getEnd());
-        }
-        visited[vertex] = true;
-        return edge;
+
+  // fixed, might actually work
+  private Edge getNextEdge(boolean[] visited, int x) {
+    ArrayList<Edge> edgeX = edges.get(x);
+    int size = edgeX.size();
+    for (int i = 0; i < size; i++) {
+      Edge curEdge = edgeX.get(i);
+      if (curEdge.getCap()>0 && !visited[curEdge.getEnd()]) {
+        visited[curEdge.getEnd()] = true;
+        return curEdge;
       }
     }
     else return null;
   }
 
-
+  // Calculates one path from S to T
   private int recursion(boolean[] visited, int vertex, int miniCap) {
     if (vertex != t) {
       edge = getNextEdge(visited, vertex);
@@ -68,6 +68,17 @@ public class maxFlow {
     }
     else return cap;
     }
+  }
+
+  private boolean checkExist(int x, int y) {
+    ArrayList<Edge> edgeX = edges.get(x);
+    int size = edgeX.size();
+    for (int i = 0; i < size; i++) {
+      if (edgeX.get(i).getEnd() == y) {
+        return true;
+      }
+    }
+    return false;
   }
 
 }
