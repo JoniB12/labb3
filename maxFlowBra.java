@@ -1,11 +1,12 @@
 
 public class maxFlow {
 
-  Kattio io;
+  Kattio io = new Kattio();
   int s;
   int t;
   int v;
   int e;
+  int flow;
   ArrayList<ArrayList<Edge>> edges;
 
   private void readFlowGraph() {
@@ -32,12 +33,17 @@ public class maxFlow {
   }
 
   private void solveFlow() {
-    boolean[] visited = new boolean[v];
+    boolean[] visited;
     Edge edge;
     int vertex = s;
-    edge = getNextEdge(visited, vertex);
-    // add handling of the recursion results
-
+    int cap = -1;
+    flow = 0;
+    while (cap != 0) {
+      visited = new boolean[v];
+      visited[s] = true;
+      cap = recursion(visited, s);
+      flow += cap;
+    }
   }
 
   // fixed, might actually work
@@ -58,13 +64,16 @@ public class maxFlow {
   private int recursion(boolean[] visited, int vertex, int miniCap) {
     if (vertex != t) {
       edge = getNextEdge(visited, vertex);
-      int cap = min(edge.getCap(), miniCap);
-      flow = recursion(visited, edge.getEnd, cap);
-      edge.setFlow(flow);
-      edge.setCap(-flow);
-      edge.getReverse().setFlow(-flow);
-      edge.getReverse().setCap(flow);
-      return cap;
+      if (edge != null) {
+        int cap = min(edge.getCap(), miniCap);
+        flow = recursion(visited, edge.getEnd, cap);
+        edge.setFlow(flow);
+        edge.setCap(-flow);
+        edge.getReverse().setFlow(-flow);
+        edge.getReverse().setCap(flow);
+        return cap;
+      }
+      else return 0;
     }
     else return cap;
     }
@@ -79,6 +88,34 @@ public class maxFlow {
       }
     }
     return false;
+  }
+
+  private void writeGraph() {
+    ArrayList<int[]> matrix = getMatrix();
+    int e = matrix.size();
+    io.print(v);
+    io.print(s + " " + t + " " + flow);
+    io.print(e);
+    for (int i = 0; i < e; i++) {
+      int[] edge = matrix.get(i);
+      io.print(edge[0] + " " + edge[1] + " " + edge[2]);
+    }
+  }
+
+  private ArrayList<int[]> getMatrix() {
+    ArrayList<int[]> matrix = new ArrayList<int[]>();
+    int sizeX = edges.size();
+    for (int i = 0; i < sizeX; i++) {
+      ArrayList<Edge> edgeX = edges.get(i);
+      int sizeY = edgeX.size();
+      for (int j = 0; j < sizeY; j++) {
+        Edge curEdge = edgeX.get(j);
+        if (curEdge.getFlow() > 0) {
+          matrix.add([curEdge.getStart(), curEdge.getEnd(), curEdge.getFlow()]);
+        }
+      }
+    }
+    return matrix;
   }
 
 }
