@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.lang.Math;
 
 public class maxFlow {
 
@@ -10,24 +12,26 @@ public class maxFlow {
   ArrayList<ArrayList<Edge>> edges;
 
   private void readFlowGraph() {
-
     v = io.getInt();
     s = io.getInt();
     t = io.getInt();
     e = io.getInt();
-    edges = new ArrayList<ArrayList<Edge>>(e);
-
-    for (int i = 0; i < e; ++i) {
+    edges = new ArrayList<ArrayList<Edge>>();
+    for (int i = 0; i < v; i++) {
+      // ArrayList<Edge> list = ;
+      edges.add(new ArrayList<Edge>());
+    }
+    for (int i = 0; i < e; i++) {
       int x = io.getInt();
       int y = io.getInt();
       int c = io.getInt();
       if (!checkExist(x, y)) {
-        Edge xEdge = new (Edge(x, y, c, 0));
-        Edge yEdge = new (Edge(y, x, -c, 0));
+        Edge xEdge = new Edge(x, y, c, 0);
+        Edge yEdge = new Edge(y, x, -c, 0);
         xEdge.setReverse(yEdge);
         yEdge.setReverse(xEdge);
-        edges.add(x, xEdge);
-        edges.add(y, yEdge);
+        edges.get(x).add(xEdge);
+        edges.get(y).add(yEdge);
       }
     }
   }
@@ -41,7 +45,7 @@ public class maxFlow {
     while (cap != 0) {
       visited = new boolean[v];
       visited[s] = true;
-      cap = recursion(visited, s);
+      cap = recursion(visited, s, 0);
       flow += cap;
     }
   }
@@ -57,16 +61,17 @@ public class maxFlow {
         return curEdge;
       }
     }
-    else return null;
+    return null;
   }
 
   // Calculates one path from S to T
   private int recursion(boolean[] visited, int vertex, int miniCap) {
+    int cap;
     if (vertex != t) {
-      edge = getNextEdge(visited, vertex);
+      Edge edge = getNextEdge(visited, vertex);
       if (edge != null) {
-        int cap = min(edge.getCap(), miniCap);
-        flow = recursion(visited, edge.getEnd, cap);
+        cap = Math.min(edge.getCap(), miniCap);
+        flow = recursion(visited, edge.getEnd(), cap);
         edge.setFlow(flow);
         edge.setCap(-flow);
         edge.getReverse().setFlow(-flow);
@@ -76,7 +81,6 @@ public class maxFlow {
       else return 0;
     }
     else return cap;
-    }
   }
 
   private boolean checkExist(int x, int y) {
@@ -111,7 +115,8 @@ public class maxFlow {
       for (int j = 0; j < sizeY; j++) {
         Edge curEdge = edgeX.get(j);
         if (curEdge.getFlow() > 0) {
-          matrix.add([curEdge.getStart(), curEdge.getEnd(), curEdge.getFlow()]);
+          int[] edge = {curEdge.getStart(), curEdge.getEnd(), curEdge.getFlow()};
+          matrix.add(edge);
         }
       }
     }

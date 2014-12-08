@@ -52,7 +52,7 @@ public class Edge {
 		this.reverse = edge;
 	}
 
-	public void getReverse(){
+	public Edge getReverse(){
 		return reverse;
 	}
 }
