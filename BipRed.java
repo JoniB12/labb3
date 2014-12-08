@@ -68,6 +68,8 @@ public class BipRed {
 	int t = io.getInt();
 	int totflow = io.getInt();
 	e = io.getInt();
+	x=2;
+	y=3;
 
 
 	allEdges = new int[3][e];
@@ -105,9 +107,9 @@ public class BipRed {
     BipRed() {
 	io = new Kattio(System.in, System.out);
 	
-	readBipartiteGraph();
+	//readBipartiteGraph();
 	
-	writeFlowGraph();
+	//writeFlowGraph();
 	
 	readMaxFlowSolution();
 	
