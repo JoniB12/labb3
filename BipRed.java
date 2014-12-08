@@ -66,7 +66,7 @@ public class BipRed {
 	int v = io.getInt();
 	int s = io.getInt();
 	int t = io.getInt();
-	int totflow = io.getInt();
+	totflow = io.getInt();
 	e = io.getInt();
 
 
