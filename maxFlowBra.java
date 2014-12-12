@@ -1,9 +1,9 @@
 import java.util.ArrayList;
 import java.lang.Math;
 
-public class maxFlow {
+public class maxFlowBra {
 
-  Kattio io = new Kattio();
+  Kattio io = new Kattio(System.in, System.out);
   int s;
   int t;
   int v;
