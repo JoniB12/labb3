@@ -2,8 +2,6 @@ import java.util.ArrayList;
 import java.lang.Math;
 
 public class maxFlowBra {
-
-  Kattio io = new Kattio(System.in, System.out);
   int s;
   int t;
   int v;
@@ -11,6 +9,15 @@ public class maxFlowBra {
   int flow;
   ArrayList<ArrayList<Edge>> edges;
   int cap = 0;
+  Kattio io;
+
+  maxFlowBra() {
+    io = new Kattio(System.in, System.out);
+    readFlowGraph();
+    solveFlow();
+    writeGraph();
+    io.close();
+  }
 
   private void readFlowGraph() {
     v = io.getInt();
@@ -18,7 +25,7 @@ public class maxFlowBra {
     t = io.getInt();
     e = io.getInt();
     edges = new ArrayList<ArrayList<Edge>>();
-    for (int i = 0; i < v; i++) {
+    for (int i = 0; i <= v; i++) {
       // ArrayList<Edge> list = ;
       edges.add(new ArrayList<Edge>());
     }
@@ -39,12 +46,10 @@ public class maxFlowBra {
 
   private void solveFlow() {
     boolean[] visited;
-    Edge edge;
-    int vertex = s;
     int cap = -1;
     flow = 0;
     while (cap != 0) {
-      visited = new boolean[v];
+      visited = new boolean[v+1];
       visited[s] = true;
       cap = recursion(visited, s, 0);
       flow += cap;
@@ -97,13 +102,14 @@ public class maxFlowBra {
   private void writeGraph() {
     ArrayList<int[]> matrix = getMatrix();
     int e = matrix.size();
-    io.print(v);
-    io.print(s + " " + t + " " + flow);
-    io.print(e);
+    io.println(v);
+    io.println(s + " " + t + " " + flow);
+    io.println(e);
     for (int i = 0; i < e; i++) {
       int[] edge = matrix.get(i);
-      io.print(edge[0] + " " + edge[1] + " " + edge[2]);
+      io.println(edge[0] + " " + edge[1] + " " + edge[2]);
     }
+    io.flush();
   }
 
   private ArrayList<int[]> getMatrix() {
@@ -123,4 +129,7 @@ public class maxFlowBra {
     return matrix;
   }
 
+  public static void main(String args[]) {
+    new maxFlowBra();
+  }
 }
