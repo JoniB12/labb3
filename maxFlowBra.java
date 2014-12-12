@@ -10,6 +10,7 @@ public class maxFlowBra {
   int e;
   int flow;
   ArrayList<ArrayList<Edge>> edges;
+  int cap = 0;
 
   private void readFlowGraph() {
     v = io.getInt();
@@ -66,7 +67,6 @@ public class maxFlowBra {
 
   // Calculates one path from S to T
   private int recursion(boolean[] visited, int vertex, int miniCap) {
-    int cap;
     if (vertex != t) {
       Edge edge = getNextEdge(visited, vertex);
       if (edge != null) {
