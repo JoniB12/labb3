@@ -51,7 +51,7 @@ public class maxFlowBra {
     while (cap != 0) {
       visited = new boolean[v+1];
       visited[s] = true;
-      cap = recursion(visited, s, 0);
+      cap = recursion(visited, s, Integer.MAX_VALUE);
       flow += cap;
     }
   }
