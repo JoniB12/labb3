@@ -6,7 +6,7 @@ public class maxFlowBra {
   int t;
   int v;
   int e;
-  int flow;
+  int totFlow;
   ArrayList<ArrayList<Edge>> edges;
   int cap = 0;
   Kattio io;
@@ -47,12 +47,13 @@ public class maxFlowBra {
   private void solveFlow() {
     boolean[] visited;
     int cap = -1;
-    flow = 0;
-    while (cap != 0) {
+    totFlow = 0;
+    while (keepGoing(edges.get(s))) {
+      io.println("dshjba "+ keepGoing(edges.get(s)));
       visited = new boolean[v+1];
       visited[s] = true;
-      cap = recursion(visited, s, Integer.MAX_VALUE);
-      flow += cap;
+      cap = recursion(visited, s, Integer.MAX_VALUE, 0);
+      totFlow += cap;
     }
   }
 
@@ -71,12 +72,12 @@ public class maxFlowBra {
   }
 
   // Calculates one path from S to T
-  private int recursion(boolean[] visited, int vertex, int miniCap) {
+  private int recursion(boolean[] visited, int vertex, int miniCap, int flow) {
     if (vertex != t) {
       Edge edge = getNextEdge(visited, vertex);
       if (edge != null) {
         cap = Math.min(edge.getCap(), miniCap);
-        flow = recursion(visited, edge.getEnd(), cap);
+        flow = recursion(visited, edge.getEnd(), cap, flow);
         edge.setFlow(flow);
         edge.setCap(-flow);
         edge.getReverse().setFlow(-flow);
@@ -86,6 +87,18 @@ public class maxFlowBra {
       else return 0;
     }
     else return cap;
+  }
+
+  private boolean keepGoing(ArrayList<Edge> firstEdge) {
+    int size = firstEdge.size();
+    io.println("bajs "+ firstEdge.size());
+    for (int i = 0; i < size; i++) {
+      if (firstEdge.get(i).getCap() > 0) {
+        io.println("myyyys "+ firstEdge.get(i).getCap());
+        return true;
+      }
+    }
+    return false;
   }
 
   private boolean checkExist(int x, int y) {
@@ -103,7 +116,7 @@ public class maxFlowBra {
     ArrayList<int[]> matrix = getMatrix();
     int e = matrix.size();
     io.println(v);
-    io.println(s + " " + t + " " + flow);
+    io.println(s + " " + t + " " + totFlow);
     io.println(e);
     for (int i = 0; i < e; i++) {
       int[] edge = matrix.get(i);
@@ -115,17 +128,20 @@ public class maxFlowBra {
   private ArrayList<int[]> getMatrix() {
     ArrayList<int[]> matrix = new ArrayList<int[]>();
     int sizeX = edges.size();
+    //io.println("edge.size "+edges.size());
     for (int i = 0; i < sizeX; i++) {
       ArrayList<Edge> edgeX = edges.get(i);
       int sizeY = edgeX.size();
       for (int j = 0; j < sizeY; j++) {
         Edge curEdge = edgeX.get(j);
+        io.println("flow " + curEdge.getFlow());
         if (curEdge.getFlow() > 0) {
           int[] edge = {curEdge.getStart(), curEdge.getEnd(), curEdge.getFlow()};
           matrix.add(edge);
         }
       }
     }
+    //io.println("matrix.size "+matrix.size());
     return matrix;
   }
 
