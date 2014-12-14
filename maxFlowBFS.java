@@ -87,7 +87,7 @@ public class maxFlow {
     if (path[t] == -1) {
       totFlow = 0;
       for (int i; i < F[s].length; i++) {
-        totFlow += F[s];
+        totFlow += F[s][i];
       }
     }
   }
