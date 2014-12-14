@@ -96,7 +96,7 @@ public class maxFlow {
     ArrayList<int[]> matrix = getMatrix();
     int e = matrix.size();
     io.print(v);
-    io.print(s + " " + t + " " + flow);
+    io.print(s + " " + t + " " + totFlow);
     io.print(e);
     for (int i = 0; i < e; i++) {
       int[] edge = matrix.get(i);
@@ -106,14 +106,12 @@ public class maxFlow {
 
   private ArrayList<int[]> getMatrix() {
     ArrayList<int[]> matrix = new ArrayList<int[]>();
-    int sizeX = edges.size();
+    int sizeX = edges.length;
     for (int i = 0; i < sizeX; i++) {
-      ArrayList<Edge> edgeX = edges.get(i);
-      int sizeY = edgeX.size();
+      int sizeY = edges[i].length;
       for (int j = 0; j < sizeY; j++) {
-        Edge curEdge = edgeX.get(j);
-        if (curEdge.getFlow() > 0) {
-          int[] edge = {curEdge.getStart(), curEdge.getEnd(), curEdge.getFlow()};
+        if (F[i][j] > 0) {
+          int[] edge = {i, j, F[i][j]};
           matrix.add(edge);
         }
       }
