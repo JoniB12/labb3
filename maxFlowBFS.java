@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+import java.util.*;
 import java.lang.Math;
 
 public class maxFlow {
@@ -20,15 +20,13 @@ public class maxFlow {
     t = io.getInt();
     e = io.getInt();
     edges = new int[v+1][v+1];
+    Arrays.fill(edges, 0);
     
     for (int i = 0; i < e; i++) {
       int x = io.getInt();
       int y = io.getInt();
       int c = io.getInt();
-      if (int[x][y] != null) {
-        int[x][y] += c;
-      }
-      else int[x][y] = c;
+      edges[x][y] += c;
     }
   }
 
@@ -69,7 +67,7 @@ public class maxFlow {
       for (int i = 1; i < edges[vertex].length; i++) {
         if (edges[vertex][i]-F[vertex][i] > 0 && path[i] == -1) {
           path[i] = vertex;
-          M[i] = Math.min(maxflow[vertex], edges[vertex][i] - F[vertex][i]);
+          maxflow[i] = Math.min(maxflow[vertex], edges[vertex][i] - F[vertex][i]);
           if (i != t) {
             fifo.offer(i);
           }
