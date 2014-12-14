@@ -73,18 +73,30 @@ public class maxFlowBra {
 
   // Calculates one path from S to T
   private int recursion(boolean[] visited, int vertex, int miniCap, int flow) {
+    // if (vertex != t) {
+    //   Edge edge = getNextEdge(visited, vertex);
+    //   if (edge != null) {
+    //     cap = Math.min(edge.getCap(), miniCap);
+    //     flow = recursion(visited, edge.getEnd(), cap, flow);
     if (vertex != t) {
-      Edge edge = getNextEdge(visited, vertex);
-      if (edge != null) {
-        cap = Math.min(edge.getCap(), miniCap);
-        flow = recursion(visited, edge.getEnd(), cap, flow);
-        edge.setFlow(flow);
-        edge.setCap(-flow);
-        edge.getReverse().setFlow(-flow);
-        edge.getReverse().setCap(flow);
-        return cap;
+      Edge edge = null;
+      int size = edges.get(vertex).size();
+      int i = 0;
+      while (flow == 0 && i < size) {
+        edge = getNextEdge(visited, vertex);
+        if (edge != null) {
+          cap = Math.min(edge.getCap(), miniCap);
+          flow = recursion(visited, edge.getEnd(), cap, flow);
+        }
+        else return 0;
+        i++;
       }
-      else return 0;
+      if (flow == 0) return 0;
+      edge.setFlow(flow);
+      edge.setCap(-flow);
+      edge.getReverse().setFlow(-flow);
+      edge.getReverse().setCap(flow);
+      return cap;
     }
     else return cap;
   }
