@@ -14,7 +14,6 @@ public class maxFlowBFS {
   int[][] edges;
   int[][] F;
   int[] path;
-  int[] maxflow;
 
   maxFlowBFS() {
     readFlowGraph();
@@ -44,8 +43,7 @@ public class maxFlowBFS {
       path = new int[v+1];
       Arrays.fill(path, -1);
       path[s] = s;
-      maxflow = new int[v+1];
-      maxflow[s] = Integer.MAX_VALUE;
+      int maxflow = Integer.MAX_VALUE;
       ArrayDeque<Integer> fifo = new ArrayDeque<Integer>();
       fifo.add(s);
       while (!fifo.isEmpty()) {
@@ -53,26 +51,23 @@ public class maxFlowBFS {
         for (int i = 1; i < edges[vertex].length; i++) {
           if (edges[vertex][i]-F[vertex][i] > 0 && path[i] == -1) {
             path[i] = vertex;
-            maxflow[i] = Math.min(maxflow[vertex], edges[vertex][i] - F[vertex][i]);
+            maxflow = Math.min(maxflow, edges[vertex][i] - F[vertex][i]);
             if (i != t) {
               fifo.add(i);
             }
             else {
               while (path[i] != i) {
                 vertex = path[i];
-                F[vertex][i] += maxflow[t];
-                F[i][vertex] -= maxflow[t];
+                F[vertex][i] += maxflow;
+                F[i][vertex] -= maxflow;
                 i = vertex;
               }
+              totFlow += maxflow;
             }
           }
         }
       }
       if (path[t] == -1) {
-        totFlow = 0;
-        for (int i = 0; i < F[s].length; i++) {
-          totFlow += F[s][i];
-        }
         return totFlow;
       }
     }
