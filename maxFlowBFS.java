@@ -34,6 +34,9 @@ public class maxFlowBFS {
       int y = io.getInt();
       int c = io.getInt();
       edges[x][y] = c;
+      if (!(edges[y][x] > 0)) {
+        edges[y][x] = 0;
+      }
     }
   }
 
@@ -64,15 +67,12 @@ public class maxFlowBFS {
                 F[i][vertex] -= maxflow[t];
                 i = vertex;
               }
+              totFlow += maxflow[t];
             }
           }
         }
       }
       if (path[t] == -1) {
-        totFlow = 0;
-        for (int i = 0; i < F[s].length; i++) {
-          totFlow += F[s][i];
-        }
         return totFlow;
       }
     }
