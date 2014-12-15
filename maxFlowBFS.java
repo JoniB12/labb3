@@ -1,9 +1,9 @@
 import java.util.*;
 import java.lang.Math;
 
-public class maxFlow {
+public class maxFlowBFS {
 
-  Kattio io = new Kattio();
+  Kattio io = new Kattio(System.in, System.out);
   int s;
   int t;
   int v;
@@ -14,14 +14,22 @@ public class maxFlow {
   int[] path;
   int[] maxflow;
 
+  maxFlowBFS() {
+    readFlowGraph();
+    bfs();
+    writeGraph();
+    io.close();
+  }
+
   private void readFlowGraph() {
     v = io.getInt();
     s = io.getInt();
     t = io.getInt();
     e = io.getInt();
     edges = new int[v+1][v+1];
-    Arrays.fill(edges, 0);
-    
+    for (int i = 0; i < edges.length; i++) {
+      Arrays.fill(edges[i], 0);
+    }
     for (int i = 0; i < e; i++) {
       int x = io.getInt();
       int y = io.getInt();
@@ -54,38 +62,42 @@ public class maxFlow {
   //   return null;
   // }
 
-  private void bfs() {
+  private int bfs() {
     F = new int[v+1][v+1];
-    path = new int[v+1];
-    Arrays.fill(path, -1);
-    maxflow = new int[v+1];
-    maxflow[s] = Integer.MAX_VALUE;
-    Queue<Integer> fifo = new LinkedList<Integer>();
-    fifo.offer(s);
-    while (!fifo.isEmpty()) {
-      int vertex = fifo.poll();
-      for (int i = 1; i < edges[vertex].length; i++) {
-        if (edges[vertex][i]-F[vertex][i] > 0 && path[i] == -1) {
-          path[i] = vertex;
-          maxflow[i] = Math.min(maxflow[vertex], edges[vertex][i] - F[vertex][i]);
-          if (i != t) {
-            fifo.offer(i);
-          }
-          else {
-            while (path[i] != i) {
-              vertex = path[i];
-              F[vertex][i] += maxflow[t];
-              F[i][vertex] -= maxflow[t];
-              i = vertex;
+    while (true) {
+      path = new int[v+1];
+      Arrays.fill(path, -1);
+      path[s] = s;
+      maxflow = new int[v+1];
+      maxflow[s] = Integer.MAX_VALUE;
+      Queue<Integer> fifo = new LinkedList<Integer>();
+      fifo.offer(s);
+      while (!fifo.isEmpty()) {
+        int vertex = fifo.poll();
+        for (int i = 1; i < edges[vertex].length; i++) {
+          if (edges[vertex][i]-F[vertex][i] > 0 && path[i] == -1) {
+            path[i] = vertex;
+            maxflow[i] = Math.min(maxflow[vertex], edges[vertex][i] - F[vertex][i]);
+            if (i != t) {
+              fifo.offer(i);
+            }
+            else {
+              while (path[i] != i) {
+                vertex = path[i];
+                F[vertex][i] += maxflow[t];
+                F[i][vertex] -= maxflow[t];
+                i = vertex;
+              }
             }
           }
         }
       }
-    }
-    if (path[t] == -1) {
-      totFlow = 0;
-      for (int i; i < F[s].length; i++) {
-        totFlow += F[s][i];
+      if (path[t] == -1) {
+        totFlow = 0;
+        for (int i = 0; i < F[s].length; i++) {
+          totFlow += F[s][i];
+        }
+        return totFlow;
       }
     }
   }
@@ -93,12 +105,13 @@ public class maxFlow {
   private void writeGraph() {
     ArrayList<int[]> matrix = getMatrix();
     int e = matrix.size();
-    io.print(v);
-    io.print(s + " " + t + " " + totFlow);
-    io.print(e);
+    io.println(v);
+    io.println(s + " " + t + " " + totFlow);
+    io.println(e);
     for (int i = 0; i < e; i++) {
       int[] edge = matrix.get(i);
-      io.print(edge[0] + " " + edge[1] + " " + edge[2]);
+      io.println(edge[0] + " " + edge[1] + " " + edge[2]);
+      io.flush();
     }
   }
 
@@ -115,6 +128,10 @@ public class maxFlow {
       }
     }
     return matrix;
+  }
+
+  public static void main(String args[]) {
+    new maxFlowBFS();
   }
 
 }
