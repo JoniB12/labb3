@@ -44,46 +44,38 @@ public class maxFlowBra {
       }
       Edge xEdge = new Edge(x, y, c, 0);
       Edge yEdge = new Edge(y, x, -c, 0);
-      xEdge.setReverse(yEdge);
-      yEdge.setReverse(xEdge);
+      xEdge.reverse=yEdge;
+      yEdge.reverse=xEdge;
       edges[x].add(xEdge);
       edges[y].add(yEdge);
     }
   }
 
   private void writeGraph() {
-    ArrayList<int[]> matrix = getMatrix();
-    int e = matrix.size();
     io.println(v);
     io.println(s + " " + t + " " + totFlow);
-    io.println(e);
-    for (int i = 0; i < e; i++) {
-      int[] edge = matrix.get(i);
-      io.println(edge[0] + " " + edge[1] + " " + edge[2]);
-    }
-    io.flush();
-  }
-
-  private ArrayList<int[]> getMatrix() {
-    ArrayList<int[]> matrix = new ArrayList<int[]>();
-  //int sizeX = edges.length;
-    //io.println("edge.size "+edges.size());
-    for (int i = 0; i <= e; i++) {
+    ArrayList<Edge> list = new ArrayList<Edge>();
+    for (int i = 1; i <= v; i++) {
       if(edges[i] != null){
-        ArrayList<Edge> curEdges = edges[i];
-        for (int j = 0; j < curEdges.size(); j++) {
-          Edge curEdge = curEdges.get(j);
-       // io.println("flow " + curEdge.getFlow());
-          if (curEdge.getFlow() > 0) {
-            int[] edge = {curEdge.getStart(), curEdge.getEnd(), curEdge.getFlow()};
-            matrix.add(edge);
+        //ArrayList<Edge> curEdges = edges[i];
+        for (int j = 0; j < edges[i].size(); j++) {
+          Edge curEdge = edges[i].get(j);
+          if (edges[i].get(j).flow > 0) {
+            list.add(edges[i].get(j));
+            // int[] edge = {curEdge.start, curEdge.end, curEdge.flow};
+            // matrix.add(edge);
           }
         }
       }
     }
-    //io.println("matrix.size "+matrix.size());
-    return matrix;
+    io.println(list.size());
+    for (int i = 0; i < list.size(); i++) {
+      Edge thisfreakinedge = list.get(i);
+      io.println(thisfreakinedge.start + " " + thisfreakinedge.end + " " + thisfreakinedge.flow);
+    }
+    io.flush();
   }
+  
 
   public static void main(String args[]) {
     new maxFlowBra();
@@ -94,10 +86,10 @@ public class maxFlowBra {
       ArrayList<Edge> localPath = new ArrayList<Edge>();
       Edge edge = new Edge(t, 0, 0, 0);
       int minCap = Integer.MAX_VALUE;
-      while(edge.getStart()!=s){
-        edge = path[edge.getStart()];
+      while(edge.start!=s){
+        edge = path[edge.start];
         localPath.add(edge);
-        minCap = Math.min(minCap, edge.getCap());
+        minCap = Math.min(minCap, edge.cap);
       }
       totFlow += minCap;
       for(int i = 0; i < localPath.size(); i++){
@@ -120,8 +112,8 @@ public class maxFlowBra {
     addToQueue(s);
     while(!fifo.isEmpty()){
       curEdge = fifo.poll();
-      //io.println(curEdge.getStart());
-      if(addToQueue(curEdge.getEnd()))
+      //io.println(curEdge.start);
+      if(addToQueue(curEdge.end))
         return true;
     }
     return false;
@@ -131,14 +123,14 @@ public class maxFlowBra {
     if(edges[murEdge]!=null){
       ArrayList<Edge> neighbours = edges[murEdge];
       for(int i = 0; i < neighbours.size(); i++){
-        
+
         Edge thisEdge = neighbours.get(i);
-        //io.println("forloopin" + i + " " + thisEdge.getStart());
-        if(thisEdge.getCap()>0 && !visited[thisEdge.getEnd()]){
+        //io.println("forloopin" + i + " " + thisEdge.start);
+        if(thisEdge.cap>0 && !visited[thisEdge.end]){
           fifo.add(thisEdge); 
-          //io.println(thisEdge.getCap());
-          path[thisEdge.getEnd()] = thisEdge;
-          if(thisEdge.getEnd() == t)
+          //io.println(thisEdge.cap);
+          path[thisEdge.end] = thisEdge;
+          if(thisEdge.end == t)
             return true;
         }
       }
