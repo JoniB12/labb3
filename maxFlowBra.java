@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.lang.Math;
+import java.util.ArrayDeque;
 
 public class maxFlowBra {
   int s;
@@ -7,14 +8,19 @@ public class maxFlowBra {
   int v;
   int e;
   int totFlow;
-  ArrayList<ArrayList<Edge>> edges;
+  ArrayList<Edge>[] edges;
   int cap = 0;
   Kattio io;
+  ArrayDeque<Edge> fifo;
+  Edge[] path;
+  Edge curEdge;
+  boolean[] visited;
 
   maxFlowBra() {
     io = new Kattio(System.in, System.out);
     readFlowGraph();
-    solveFlow();
+    path = new Edge[v+1];
+    edmondsKarp();
     writeGraph();
     io.close();
   }
@@ -24,104 +30,25 @@ public class maxFlowBra {
     s = io.getInt();
     t = io.getInt();
     e = io.getInt();
-    edges = new ArrayList<ArrayList<Edge>>();
-    for (int i = 0; i <= v; i++) {
-      // ArrayList<Edge> list = ;
-      edges.add(new ArrayList<Edge>());
-    }
+    edges = new ArrayList[v+1];
+    
     for (int i = 0; i < e; i++) {
       int x = io.getInt();
       int y = io.getInt();
       int c = io.getInt();
-      if (!checkExist(x, y)) {
-        Edge xEdge = new Edge(x, y, c, 0);
-        Edge yEdge = new Edge(y, x, -c, 0);
-        xEdge.setReverse(yEdge);
-        yEdge.setReverse(xEdge);
-        edges.get(x).add(xEdge);
-        edges.get(y).add(yEdge);
+      if (edges[x]==null) {
+        edges[x]=new ArrayList<Edge>(); 
       }
-    }
-  }
-
-  private void solveFlow() {
-    boolean[] visited;
-    int cap = -1;
-    totFlow = 0;
-    while (keepGoing(edges.get(s))) {
-      io.println("dshjba "+ keepGoing(edges.get(s)));
-      visited = new boolean[v+1];
-      visited[s] = true;
-      cap = recursion(visited, s, Integer.MAX_VALUE, 0);
-      totFlow += cap;
-    }
-  }
-
-  // fixed, might actually work
-  private Edge getNextEdge(boolean[] visited, int x) {
-    ArrayList<Edge> edgeX = edges.get(x);
-    int size = edgeX.size();
-    for (int i = 0; i < size; i++) {
-      Edge curEdge = edgeX.get(i);
-      if (curEdge.getCap()>0 && !visited[curEdge.getEnd()]) {
-        visited[curEdge.getEnd()] = true;
-        return curEdge;
+      if (edges[y] == null){
+        edges[y]=new ArrayList<Edge>();
       }
+      Edge xEdge = new Edge(x, y, c, 0);
+      Edge yEdge = new Edge(y, x, -c, 0);
+      xEdge.setReverse(yEdge);
+      yEdge.setReverse(xEdge);
+      edges[x].add(xEdge);
+      edges[y].add(yEdge);
     }
-    return null;
-  }
-
-  // Calculates one path from S to T
-  private int recursion(boolean[] visited, int vertex, int miniCap, int flow) {
-    // if (vertex != t) {
-    //   Edge edge = getNextEdge(visited, vertex);
-    //   if (edge != null) {
-    //     cap = Math.min(edge.getCap(), miniCap);
-    //     flow = recursion(visited, edge.getEnd(), cap, flow);
-    if (vertex != t) {
-      Edge edge = null;
-      int size = edges.get(vertex).size();
-      int i = 0;
-      while (flow == 0 && i < size) {
-        edge = getNextEdge(visited, vertex);
-        if (edge != null) {
-          cap = Math.min(edge.getCap(), miniCap);
-          flow = recursion(visited, edge.getEnd(), cap, flow);
-        }
-        else return 0;
-        i++;
-      }
-      if (flow == 0) return 0;
-      edge.setFlow(flow);
-      edge.setCap(-flow);
-      edge.getReverse().setFlow(-flow);
-      edge.getReverse().setCap(flow);
-      return cap;
-    }
-    else return cap;
-  }
-
-  private boolean keepGoing(ArrayList<Edge> firstEdge) {
-    int size = firstEdge.size();
-    io.println("bajs "+ firstEdge.size());
-    for (int i = 0; i < size; i++) {
-      if (firstEdge.get(i).getCap() > 0) {
-        io.println("myyyys "+ firstEdge.get(i).getCap());
-        return true;
-      }
-    }
-    return false;
-  }
-
-  private boolean checkExist(int x, int y) {
-    ArrayList<Edge> edgeX = edges.get(x);
-    int size = edgeX.size();
-    for (int i = 0; i < size; i++) {
-      if (edgeX.get(i).getEnd() == y) {
-        return true;
-      }
-    }
-    return false;
   }
 
   private void writeGraph() {
@@ -139,17 +66,18 @@ public class maxFlowBra {
 
   private ArrayList<int[]> getMatrix() {
     ArrayList<int[]> matrix = new ArrayList<int[]>();
-    int sizeX = edges.size();
+  //int sizeX = edges.length;
     //io.println("edge.size "+edges.size());
-    for (int i = 0; i < sizeX; i++) {
-      ArrayList<Edge> edgeX = edges.get(i);
-      int sizeY = edgeX.size();
-      for (int j = 0; j < sizeY; j++) {
-        Edge curEdge = edgeX.get(j);
-        io.println("flow " + curEdge.getFlow());
-        if (curEdge.getFlow() > 0) {
-          int[] edge = {curEdge.getStart(), curEdge.getEnd(), curEdge.getFlow()};
-          matrix.add(edge);
+    for (int i = 0; i <= e; i++) {
+      if(edges[i] != null){
+        ArrayList<Edge> curEdges = edges[i];
+        for (int j = 0; j < curEdges.size(); j++) {
+          Edge curEdge = curEdges.get(j);
+       // io.println("flow " + curEdge.getFlow());
+          if (curEdge.getFlow() > 0) {
+            int[] edge = {curEdge.getStart(), curEdge.getEnd(), curEdge.getFlow()};
+            matrix.add(edge);
+          }
         }
       }
     }
@@ -159,5 +87,63 @@ public class maxFlowBra {
 
   public static void main(String args[]) {
     new maxFlowBra();
+  }
+  private void edmondsKarp(){
+
+    while(bfs()){
+      ArrayList<Edge> localPath = new ArrayList<Edge>();
+      Edge edge = new Edge(t, 0, 0, 0);
+      int minCap = Integer.MAX_VALUE;
+      while(edge.getStart()!=s){
+        edge = path[edge.getStart()];
+        localPath.add(edge);
+        minCap = Math.min(minCap, edge.getCap());
+      }
+      totFlow += minCap;
+      for(int i = 0; i < localPath.size(); i++){
+        edge = localPath.get(i);
+        edge.setFlow(minCap);
+        edge.setCap(-minCap);
+        edge.getReverse().setFlow(-minCap);
+        edge.getReverse().setCap(minCap);
+      }
+    }
+
+  }
+  private boolean bfs(){
+    if(edges[s]==null || s==t || edges[s].size() == 0){
+      return false;
+    }
+    visited = new boolean[v+1];
+    fifo = new ArrayDeque<Edge>();
+    visited[s] = true;
+    addToQueue(s);
+    while(!fifo.isEmpty()){
+      curEdge = fifo.poll();
+      //io.println(curEdge.getStart());
+      if(addToQueue(curEdge.getEnd()))
+        return true;
+    }
+    return false;
+  }
+  private boolean addToQueue(int murEdge){
+
+    if(edges[murEdge]!=null){
+      ArrayList<Edge> neighbours = edges[murEdge];
+      for(int i = 0; i < neighbours.size(); i++){
+        
+        Edge thisEdge = neighbours.get(i);
+        //io.println("forloopin" + i + " " + thisEdge.getStart());
+        if(thisEdge.getCap()>0 && !visited[thisEdge.getEnd()]){
+          fifo.add(thisEdge); 
+          //io.println(thisEdge.getCap());
+          path[thisEdge.getEnd()] = thisEdge;
+          if(thisEdge.getEnd() == t)
+            return true;
+        }
+      }
+      visited[murEdge] = true;
+    }
+    return false;
   }
 }
